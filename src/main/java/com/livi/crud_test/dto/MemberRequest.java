@@ -1,12 +1,11 @@
 package com.livi.crud_test.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.sun.istack.NotNull;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -16,6 +15,7 @@ import lombok.Setter;
  **********************************************************************************************/
 public class MemberRequest {
 
+    @NotNull
     private String name;
 
 }
