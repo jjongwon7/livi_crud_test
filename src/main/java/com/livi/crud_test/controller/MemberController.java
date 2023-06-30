@@ -2,10 +2,14 @@ package com.livi.crud_test.controller;
 
 import com.livi.crud_test.dto.MemberRequest;
 import com.livi.crud_test.dto.MemberResponse;
+import com.livi.crud_test.entity.Member;
 import com.livi.crud_test.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,8 +23,14 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("")
-    public ResponseEntity<MemberResponse> createMember(@RequestBody MemberRequest memberRequest) {
-        return ResponseEntity.ok(memberService.createMember(memberRequest));
+    public ResponseEntity<?> createMember(@RequestBody MemberRequest memberRequest) {
+        Member member = memberService.createMember(memberRequest);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(member.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
 
     /*******************************************************************************
@@ -28,8 +38,8 @@ public class MemberController {
      * 수정이유: id를 Resource Path로 받기 위함, DTO 객체를 계층간 데이터 이동 일관성.
      ******************************************************************************/
     @GetMapping("/{id}")
-    public ResponseEntity<MemberResponse> selectMember(@PathVariable Long id) {
-        return ResponseEntity.ok(memberService.selectMember(id));
+    public ResponseEntity<?> selectMember(@PathVariable Long id) {
+        return ResponseEntity.ok(new MemberResponse(memberService.selectMember(id)));
     }
 
 
@@ -38,14 +48,15 @@ public class MemberController {
      * 수정이유: Resource의 정보를 URI 입력값과, Http Body값으로 구분하여 받기 위함.
      ******************************************************************************/
     @PutMapping("/{id}")
-    public ResponseEntity<MemberResponse> updateMember(@PathVariable Long id, @RequestBody MemberRequest memberRequest) {
-        return ResponseEntity.ok(memberService.updateMember(id, memberRequest));
+    public ResponseEntity<?> updateMember(@PathVariable Long id, @RequestBody MemberRequest memberRequest) {
+        memberService.updateMember(id, memberRequest);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteMember(@PathVariable Long id) {
+    public ResponseEntity deleteMember(@PathVariable Long id) {
         memberService.deleteMember(id);
-        return ResponseEntity.ok("삭제 성공");
+        return ResponseEntity.ok().build();
     }
 
 }

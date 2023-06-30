@@ -1,5 +1,6 @@
 package com.livi.crud_test.dto;
 
+import com.livi.crud_test.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,8 @@ import lombok.Setter;
  **********************************************************************/
 public class MemberResponse {
     private String name;
+
+    public MemberResponse(Member member) {
+        this.name = member.getName();
+    }
 }

@@ -1,12 +1,13 @@
 package com.livi.crud_test.service;
 
 import com.livi.crud_test.dto.MemberRequest;
-import com.livi.crud_test.dto.MemberResponse;
 import com.livi.crud_test.entity.Member;
 import com.livi.crud_test.exception.InvalidMemberRequestException;
 import com.livi.crud_test.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,12 +26,11 @@ public class MemberService {
      */
 
 
-    public MemberResponse createMember(MemberRequest memberRequest) {
+    public Member createMember(MemberRequest memberRequest) {
+        // TODO : 연습삼아 Builder 를 사용해서 해볼 것
+        Member member = memberRepository.save(new Member(memberRequest.getName()));
 
-        Member newMember = new Member(memberRequest.getName());
-        Member savedMember = memberRepository.save(newMember);
-
-        return new MemberResponse(savedMember.getName());
+        return member;
     }
 
 
@@ -38,37 +38,30 @@ public class MemberService {
      * @param id
      * @return 조회한 멤버 이름
      */
-    public MemberResponse selectMember(Long id) {
+    public Member selectMember(Long id) {
 
         Member member = memberRepository.findById(id).orElseThrow(InvalidMemberRequestException::new);
 
-        return new MemberResponse(member.getName());
+        return member;
     }
 
     /**
      * @param id,memberRequest
      * @return 갱신한 멤버 이름
      */
-    public MemberResponse updateMember(Long id, MemberRequest memberRequest) {
-
-        Member member = new Member(id, memberRequest.getName());
-
-        memberRepository.findById(id).orElseThrow(InvalidMemberRequestException::new);
-
-        //이게 @Transactional 역할하여 commit
-        Member updateMember = memberRepository.save(member);
-
-        return new MemberResponse(updateMember.getName());
+    @Transactional
+    public void updateMember(Long id, MemberRequest memberRequest) throws InvalidMemberRequestException {
+        Member member = memberRepository.findById(id).orElseThrow(InvalidMemberRequestException::new);
+        member.setName(memberRequest.getName());
+        memberRepository.save(member);
     }
 
     /**
      * @param id
      */
+    @Transactional
     public void deleteMember(Long id) {
-
         Member member = memberRepository.findById(id).orElseThrow(InvalidMemberRequestException::new);
-
         memberRepository.delete(member);
-
     }
 }
