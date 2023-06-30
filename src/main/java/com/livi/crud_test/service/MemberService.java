@@ -28,9 +28,12 @@ public class MemberService {
 
     public Member createMember(MemberRequest memberRequest) {
         // TODO : 연습삼아 Builder 를 사용해서 해볼 것
-        Member member = memberRepository.save(new Member(memberRequest.getName()));
+//        Member member = memberRepository.save(new Member(memberRequest.getName()));
 
-        return member;
+        Member member = Member.builder()
+                .name(memberRequest.getName())
+                .build();
+        return memberRepository.save(member);
     }
 
 
@@ -40,9 +43,7 @@ public class MemberService {
      */
     public Member selectMember(Long id) {
 
-        Member member = memberRepository.findById(id).orElseThrow(InvalidMemberRequestException::new);
-
-        return member;
+        return memberRepository.findById(id).orElseThrow(InvalidMemberRequestException::new);
     }
 
     /**
@@ -61,6 +62,7 @@ public class MemberService {
      */
     @Transactional
     public void deleteMember(Long id) {
+        //deletetById로 해도 가능
         Member member = memberRepository.findById(id).orElseThrow(InvalidMemberRequestException::new);
         memberRepository.delete(member);
     }

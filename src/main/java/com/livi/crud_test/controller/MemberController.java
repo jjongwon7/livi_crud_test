@@ -22,6 +22,10 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    /*******************************************************************************
+     * 수정내용: Post method에만 Response Header에 Location값으로 URI 추가
+     * 수정이유: id값으로 식별 불가능한 Post에서 추가된 Resource를 식별하기 위함.
+     ******************************************************************************/
     @PostMapping("")
     public ResponseEntity<?> createMember(@RequestBody MemberRequest memberRequest) {
         Member member = memberService.createMember(memberRequest);
@@ -34,12 +38,15 @@ public class MemberController {
     }
 
     /*******************************************************************************
-     * 수정내용: @RequestParam -> @PathVariable로 변경 & return String->MemberResponse
-     * 수정이유: id를 Resource Path로 받기 위함, DTO 객체를 계층간 데이터 이동 일관성.
+     * 수정내용: @RequestParam -> @PathVariable로 변경 & return String->?
+     * 수정이유: id를 Resource Path로 받기 위함, 와일드카드 사용으로 유연성 확보
      ******************************************************************************/
     @GetMapping("/{id}")
     public ResponseEntity<?> selectMember(@PathVariable Long id) {
-        return ResponseEntity.ok(new MemberResponse(memberService.selectMember(id)));
+        return ResponseEntity.ok(MemberResponse
+                .builder()
+                .name(memberService.selectMember(id).getName())
+                .build());
     }
 
 

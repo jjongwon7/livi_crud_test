@@ -1,16 +1,14 @@
 package com.livi.crud_test.entity;
 
 import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
+@Setter //이거 나중에 쓸지도?
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(schema = "public")

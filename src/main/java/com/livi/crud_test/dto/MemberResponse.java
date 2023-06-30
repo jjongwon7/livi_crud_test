@@ -1,13 +1,12 @@
 package com.livi.crud_test.dto;
 
 import com.livi.crud_test.entity.Member;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.sun.istack.NotNull;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -17,6 +16,8 @@ import lombok.Setter;
  * 수정이유: Controller단에서 @Pathvaiable을 통한 id값 전달로, 중복데이터 방지.
  **********************************************************************/
 public class MemberResponse {
+
+    @NotNull
     private String name;
 
     public MemberResponse(Member member) {
