@@ -1,6 +1,7 @@
 package com.livi.crud_test.service;
 
 import com.livi.crud_test.dto.MemberRequest;
+import com.livi.crud_test.dto.MemberResponse;
 import com.livi.crud_test.entity.Member;
 import com.livi.crud_test.exception.InvalidMemberRequestException;
 import com.livi.crud_test.repository.MemberRepository;
@@ -13,17 +14,23 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    /**********************************************************************************************
+     * 수정내용: selectMember, updateMember return Type: String->MemberResponse
+     * 수정이유: 계층간 데이터 이동에 DTO 활용하기 위함
+     **********************************************************************************************/
+
     /**
      * @param memberRequest
      * @return 생성한 멤버 id, name
      */
-    public Member createMember(MemberRequest memberRequest) {
 
-        Member newMember = new Member(memberRequest.getId(), memberRequest.getName());
 
+    public MemberResponse createMember(MemberRequest memberRequest) {
+
+        Member newMember = new Member(memberRequest.getName());
         Member savedMember = memberRepository.save(newMember);
 
-        return savedMember;
+        return new MemberResponse(savedMember.getName());
     }
 
 
@@ -31,26 +38,27 @@ public class MemberService {
      * @param id
      * @return 조회한 멤버 이름
      */
-    public String selectMember(Long id) {
+    public MemberResponse selectMember(Long id) {
 
         Member member = memberRepository.findById(id).orElseThrow(InvalidMemberRequestException::new);
 
-        return member.getName();
+        return new MemberResponse(member.getName());
     }
 
     /**
-     * @param memberRequest
+     * @param id,memberRequest
      * @return 갱신한 멤버 이름
      */
-    public String updateMember(MemberRequest memberRequest) {
+    public MemberResponse updateMember(Long id, MemberRequest memberRequest) {
 
-        Member member = new Member(memberRequest.getId(), memberRequest.getName());
+        Member member = new Member(id, memberRequest.getName());
 
-        memberRepository.findById(memberRequest.getId()).orElseThrow(InvalidMemberRequestException::new);
+        memberRepository.findById(id).orElseThrow(InvalidMemberRequestException::new);
 
+        //이게 @Transactional 역할하여 commit
         Member updateMember = memberRepository.save(member);
 
-        return updateMember.getName();
+        return new MemberResponse(updateMember.getName());
     }
 
     /**
@@ -61,5 +69,6 @@ public class MemberService {
         Member member = memberRepository.findById(id).orElseThrow(InvalidMemberRequestException::new);
 
         memberRepository.delete(member);
+
     }
 }
